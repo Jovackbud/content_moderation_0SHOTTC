@@ -19,7 +19,7 @@ def zero_shot_classifier(text=text, model=model, labels=labels):
     text = text
     prediction = model(text, labels, multi_label=True)
     if prediction["scores"][0] >= 0.75:
-        return True#, prediction["labels"][0]
+        return True, prediction["labels"][0]
     
 
 # catch darkweb links
