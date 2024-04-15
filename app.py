@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = env_variable.app_security_key
 
 # load model, labels and functions
-moderator = main.content_moderator
+mod = main.content_moderator
 
 
 class TextForm(FlaskForm):
@@ -30,7 +30,7 @@ def index():
 @app.route('/moderator')
 def moderator():
     text = session['text']
-    result = moderator(text)
+    result = mod(text)
     return render_template('moderator.html', result=result)
 
 
