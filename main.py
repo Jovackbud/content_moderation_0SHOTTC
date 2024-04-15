@@ -4,8 +4,6 @@ from tqdm import tqdm
 from transformers import pipeline
 import re
 
-text='get out shithead'
-
 
 labels = ['toxic', 'racist', 'gender bias', 'religious bias', 'aggressive', 
           'personal attacks', 'hate speech', 'offensive language']
@@ -15,11 +13,11 @@ labels = ['toxic', 'racist', 'gender bias', 'religious bias', 'aggressive',
 model = pipeline("zero-shot-classification",
                       model="facebook/bart-large-mnli")
 
-def zero_shot_classifier(text=text, model=model, labels=labels):
+def zero_shot_classifier(text, model=model, labels=labels):
     text = text
     prediction = model(text, labels, multi_label=True)
     if prediction["scores"][0] >= 0.75:
-        return True, prediction["labels"][0]
+        return True
     
 
 # catch darkweb links
@@ -56,10 +54,5 @@ def content_moderator(text, labels=labels, model=model, classifier=zero_shot_cla
         return 'Darkweb link'
     elif adult(text):
         return 'Adult content site'
-    elif zero_shot_classifier(text):
-        return prediction["labels"][0]
-
-
-
-testing = content_moderator(text=text)
-print ("testing")
+    elif classifier(text):
+        return 'Flagged content'
