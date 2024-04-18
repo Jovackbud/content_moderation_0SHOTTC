@@ -1,24 +1,22 @@
-import pandas as pd
-import transformers
-from tqdm import tqdm
 from transformers import pipeline
-import re
+import requests as re
 
-
-labels = ['toxic', 'racist', 'gender bias', 'religious bias', 'aggressive', 
+labels = ['toxic', 'racist', 'gender bias', 'religious bias', 'aggressive',
           'personal attacks', 'hate speech', 'offensive language']
-
 
 # model chosen is fbbart
 model = pipeline("zero-shot-classification",
-                      model="facebook/bart-large-mnli")
+                 model="facebook/bart-large-mnli")
+
 
 def zero_shot_classifier(text, model=model, labels=labels):
     text = text
     prediction = model(text, labels, multi_label=True)
-    if prediction["scores"][0] >= 0.75:
-        return True
-    
+    if prediction["scores"][0] < 0.75:
+        return False
+    else:
+        return str(prediction["labels"][0])
+
 
 # catch darkweb links
 def dark_web_links(text):
@@ -32,7 +30,7 @@ def dark_web_links(text):
         return True
     else:
         return False
-    
+
 
 # catch adult content links
 def adult_content_sites(text):
@@ -47,7 +45,7 @@ def adult_content_sites(text):
         return True
     else:
         return False
-    
+
 
 def content_moderator(text, labels=labels, model=model, classifier=zero_shot_classifier, dkweb=dark_web_links, adult=adult_content_sites):
     if dkweb(text):
